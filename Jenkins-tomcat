@@ -30,7 +30,7 @@ pipeline{
                        ]
                   ], 
                   credentialsId: 'nexus3', 
-                  groupId: 'in.javahome', 
+                  groupId: 'onlinebookstore', 
                   nexusUrl: '172.31.47.238:8081', 
                   nexusVersion: 'nexus3', 
                   protocol: 'http', 
