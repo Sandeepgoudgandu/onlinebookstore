@@ -76,7 +76,7 @@
         <repository>
             <id>deployment</id>
             <name>Internal Releases</name>
-            <url>http://13.233.25.3:8081/repository/maven-releases/</url>
+            <url>http://13.233.25.3:8081/repository/sample-releases/</url>
         </repository>
         <snapshotRepository>
             <id>deployment</id>
