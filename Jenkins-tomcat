@@ -8,7 +8,7 @@ pipeline{
         PATH = "/opt/maven3/bin:$PATH"
     }
    tools {
-  git 'DefaultGit'
+  git 'Defaultgit'
   }
  
     stages{
