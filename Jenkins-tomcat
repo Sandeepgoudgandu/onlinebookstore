@@ -2,7 +2,7 @@ pipeline{
     agent any
   tools {
     git 'Defaultgit'
-    maven 'Maven-3.8.6'
+    maven 'Maven-3.8.7'
   }   
     environment{
         PATH = "/opt/maven3/bin:$PATH"
