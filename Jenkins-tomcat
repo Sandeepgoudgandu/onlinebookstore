@@ -23,7 +23,7 @@ pipeline{
             steps{
                   nexusArtifactUploader artifacts: [
                        [
-                            artifactId: 'myweb', 
+                            artifactId: 'onlinebookstore', 
                             classifier: '', 
                             file: "target/onlinebookstore.war", 
                             type: 'war'
@@ -35,7 +35,7 @@ pipeline{
                   nexusVersion: 'nexus3', 
                   protocol: 'http', 
                   repository: 'sample-releases', 
-                  version: '8.2.0'  
+                  version: '0.0.1-SNAPSHOT'  
               }
             }
         stage("deploy-dev"){
