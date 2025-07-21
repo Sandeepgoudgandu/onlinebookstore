@@ -58,7 +58,7 @@ pipeline {
 
     stage('Deploy to Tomcat') {
       steps {
-        sshagent(['tomcat-new1']) {
+        sshagent(['tomcat-new']) {
           sh """
             scp -o StrictHostKeyChecking=no ${WAR_FILE} ubuntu@${DEPLOY_HOST}:${TOMCAT_HOME}/webapps/
 
