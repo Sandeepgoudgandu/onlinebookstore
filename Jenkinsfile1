@@ -79,12 +79,12 @@ pipeline {
       echo "❌ Build or deployment failed. Check logs for details."
     }
   }
-}
 post {
   always {
     emailext subject: "Build Status: ${currentBuild.currentResult}",
              body: "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}",
              to: 'dc7097301@gmail.com'
+}
   }
 }
 
