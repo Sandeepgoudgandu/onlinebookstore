@@ -1,0 +1,90 @@
+pipeline {
+  agent any
+
+  tools {
+    maven 'Maven-3.8.7'     // Ensure this is defined in Jenkins global tools
+    git 'DefaultGit'        // Add "DefaultGit" in Git tool configuration
+  }
+
+  environment {
+    SONAR_HOST_URL = 'http://65.0.168.163:9000'
+    SONAR_PROJECT_KEY = 'onlinebookstore'
+    MAVEN_VERSION = '8.8.6'
+    WAR_FILE = "target/onlinebookstore.war"
+    NEXUS_REPO_URL = 'http://13.201.66.225:8081/repository/maven-releases/'
+    DEPLOY_HOST = '65.0.74.208'
+    TOMCAT_HOME = '/opt/tomcat'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git credentialsId: 'git-pat', url: 'https://github.com/Sandeepgoudgandu/onlinebookstore.git'
+      }
+    }
+
+    stage('SonarQube Analysis & Build') {
+      steps {
+        withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR')]) {
+          sh """
+            mvn clean package sonar:sonar \
+              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+              -Dsonar.host.url=${SONAR_HOST_URL} \
+              -Dsonar.token=${SONAR}
+          """
+        }
+      }
+    }
+
+    stage('Upload WAR to Nexus') {
+      steps {
+        nexusArtifactUploader artifacts: [
+          [
+            artifactId: 'mybook',
+            classifier: '',
+            file: "${WAR_FILE}",
+            type: 'war'
+          ]
+        ],
+        credentialsId: 'nexus3',
+        groupId: 'onlinebookstore',
+        nexusUrl: '13.201.66.225:8081',
+        nexusVersion: 'nexus3',
+        protocol: 'http',
+        repository: 'maven-releases',
+        version: "${MAVEN_VERSION}"
+      }
+    }
+
+    stage('Deploy to Tomcat') {
+      steps {
+        sshagent(['tomcat-new']) {
+          sh """
+            scp -o StrictHostKeyChecking=no ${WAR_FILE} ubuntu@${DEPLOY_HOST}:${TOMCAT_HOME}/webapps/
+
+            ssh ubuntu@${DEPLOY_HOST} 'sudo ${TOMCAT_HOME}/bin/shutdown.sh || true'
+            sleep 5
+            ssh ubuntu@${DEPLOY_HOST} 'sudo ${TOMCAT_HOME}/bin/startup.sh'
+          """
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "🚀 Deployment of onlinebookstore ${MAVEN_VERSION} completed successfully!"
+    }
+    failure {
+      echo "❌ Build or deployment failed. Check logs for details."
+    }
+  }
+}
+post {
+  always {
+    emailext subject: "Build Status: ${currentBuild.currentResult}",
+             body: "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}",
+             to: 'dc7097301@gmail.com'
+  }
+}
+
