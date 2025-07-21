@@ -79,12 +79,25 @@ pipeline {
       echo "❌ Build or deployment failed. Check logs for details."
     }
   }
-post {
-  always {
-    emailext subject: "Build Status: ${currentBuild.currentResult}",
-             body: "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}",
+
+    stage('Test') {
+      echo 'Running tests...'
+      sh 'mvn test'
+    }
+
+    // Send success email
+    emailext subject: "✅ Build Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+             body: "The build succeeded.\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}",
              to: 'dc7097301@gmail.com'
-}
+
+  } catch (err) {
+    // Send failure email
+    emailext subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+             body: "Build failed with error: ${err}\nURL: ${env.BUILD_URL}",
+             to: 'dc7097301@gmail.com'
+
+    throw err // rethrow to mark build as failed
   }
+}
 }
 
