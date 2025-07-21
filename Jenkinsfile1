@@ -7,12 +7,12 @@ pipeline {
   }
 
   environment {
-    SONAR_HOST_URL = 'http://65.0.168.163:9000'
+    SONAR_HOST_URL = 'http://65.2.144.150:9000'
     SONAR_PROJECT_KEY = 'onlinebookstore'
     MAVEN_VERSION = '8.8.6'
     WAR_FILE = "target/onlinebookstore.war"
-    NEXUS_REPO_URL = 'http://13.201.66.225:8081/repository/maven-releases/'
-    DEPLOY_HOST = '65.0.74.208'
+    NEXUS_REPO_URL = 'http://43.205.140.27:8081/repository/maven-releases/'
+    DEPLOY_HOST = '172.31.36.123'
     TOMCAT_HOME = '/opt/tomcat'
   }
 
@@ -48,7 +48,7 @@ pipeline {
         ],
         credentialsId: 'nexus3',
         groupId: 'onlinebookstore',
-        nexusUrl: '13.201.66.225:8081',
+        nexusUrl: '43.205.140.27:8081',
         nexusVersion: 'nexus3',
         protocol: 'http',
         repository: 'maven-releases',
